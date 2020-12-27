@@ -13,7 +13,7 @@ type Thread struct {
 }
 
 func (thread *Thread) NumReplies() (count int) {
-	rows, err := Db.Query("SELECT cont(*) FROM posts where thread_id = $1", thread.Id)
+	rows, err := Db.Query("SELECT count(*) FROM posts where thread_id = $1", thread.Id)
 	if err != nil {
 		return
 	}
@@ -21,9 +21,9 @@ func (thread *Thread) NumReplies() (count int) {
 		if err = rows.Scan(&count); err != nil {
 			return
 		}
-		rows.Close()
-		return
 	}
+	rows.Close()
+	return
 }
 
 func Threads() (threads []Thread, err error) {
@@ -36,7 +36,7 @@ func Threads() (threads []Thread, err error) {
 		if err = rows.Scan(&conv.Id, &conv.Uuid, &conv.Topic, &conv.UserId, &conv.CreatedAt); err != nil {
 			return
 		}
-		threads = append(threads, cov)
+		threads = append(threads, conv)
 	}
 	rows.Close()
 	return

@@ -1,8 +1,9 @@
-package data
+package main
 
 import (
 	"errors"
 	"fmt"
+	"net/http"
 
 	"github.com/edm20627/go_chat/data"
 )
@@ -18,7 +19,7 @@ func session(w http.ResponseWriter, r *http.Request) (sess data.Session, err err
 	return
 }
 
-func generateHTML(w http.ResponsWriter, data interface{}, filenames ...string) {
+func generateHTML(w http.ResponseWriter, data interface{}, filenames ...string) {
 	var files []stirng
 	for _, file := range filenames {
 		files = append(files, fmt.Fprintf("template/%s.html", file))

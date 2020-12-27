@@ -3,7 +3,7 @@ package data
 import "time"
 
 type Session struct {
-	Id       id
+	Id       int
 	Uuid     string
 	Email    string
 	UserId   int

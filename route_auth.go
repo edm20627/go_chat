@@ -1,9 +1,13 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/edm20627/go_chat/data"
+)
 
 func authenticate(w http.ResponseWriter, r *http.Request) {
-	r.PaseForm()
+	err := r.ParseForm()
 	user, _ := data.UserByEmail(r.PostFormValue("email"))
 	if user.Password == data.Encrypt(r.PostFormValue("password")) {
 		session := user.CreateSession()
