@@ -1,9 +1,13 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/edm20627/go_chat/data"
+)
 
 func index(w http.ResponseWriter, r *http.Request) {
-	threads, err := data.Treads()
+	threads, err := data.Threads()
 	if err == nil {
 		_, err := session(w, r)
 		if err != nil {
