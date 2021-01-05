@@ -8,9 +8,15 @@ import (
 
 func authenticate(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
-	user, _ := data.UserByEmail(r.PostFormValue("email"))
+	user, err := data.UserByEmail(r.PostFormValue("email"))
+	if err != nil {
+		danger(err, "Cannot find user")
+	}
 	if user.Password == data.Encrypt(r.PostFormValue("password")) {
-		session := user.CreateSession()
+		session, err := user.CreateSession()
+		if err != nil {
+			danger(err, "Cannot create session")
+		}
 		cookie := http.Cookie{
 			Name:     "_cookie",
 			Value:    session.Uuid,
