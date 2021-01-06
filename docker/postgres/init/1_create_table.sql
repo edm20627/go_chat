@@ -1,3 +1,8 @@
+drop table if exists posts;
+drop table if exists threads;
+drop table if exists sessions;
+drop table if exists users;
+
 create table users (
   id          serial primary key,
   uudi        varchar(64) not null unique,
