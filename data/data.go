@@ -6,13 +6,16 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+
+	_ "github.com/lib/pq"
 )
 
 var Db *sql.DB
 
 func init() {
 	var err error
-	Db, err = sql.Open("postgres", "dbname=app_db sslmode=disable")
+	dsn := "host=postgres user=user dbname=app_db password=password sslmode=disable"
+	Db, err = sql.Open("postgres", dsn)
 	if err != nil {
 		log.Fatal(err)
 	}
