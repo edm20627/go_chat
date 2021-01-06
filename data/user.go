@@ -30,6 +30,18 @@ func (user *User) CreateSession() (session Session, err error) {
 	return
 }
 
+func (session *Session) Check() (valid bool, err error) {
+	err = Db.QueryRow("SELECT id, uuid, email, user_id, created_at FROM sessions WHERE uuid = $1", session.Uuid).Scan(&session.Id, &session.Uuid, &session.Email, &session.UserId, &session.CreatedAt)
+	if err != nil {
+		valid = false
+		return
+	}
+	if session.Id != 0 {
+		valid = true
+	}
+	return
+}
+
 func UserByEmail(email string) (user User, err error) {
 	user = User{}
 	err = Db.QueryRow("SELECT id, uuid, name, name, email, password, created_at FROM users WHERE email = $1", email).Scan(&user.Id, &user.Uuid, &user.Name, &user.Email, &user.Password, &user.CreatedAt)
