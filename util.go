@@ -24,7 +24,7 @@ var config Configuration
 
 var logger *log.Logger
 
-func int() {
+func init() {
 	loadConfig()
 	file, err := os.OpenFile("development.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
@@ -40,7 +40,7 @@ func loadConfig() {
 	}
 	decoder := json.NewDecoder(file)
 	config = Configuration{}
-	err = decoder.Decode(config) // 確認
+	err = decoder.Decode(&config)
 	if err != nil {
 		log.Fatalln("Cannot get configuration from file", err)
 	}
