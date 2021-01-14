@@ -11,6 +11,10 @@ func login(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, nil)
 }
 
+func signup(w http.ResponseWriter, r *http.Request) {
+	generateHTML(w , nil, "login.layout", "public.navbar", "signup")
+}
+
 func authenticate(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	user, err := data.UserByEmail(r.PostFormValue("email"))
