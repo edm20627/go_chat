@@ -12,7 +12,23 @@ func login(w http.ResponseWriter, r *http.Request) {
 }
 
 func signup(w http.ResponseWriter, r *http.Request) {
-	generateHTML(w , nil, "login.layout", "public.navbar", "signup")
+	generateHTML(w, nil, "login.layout", "public.navbar", "signup")
+}
+
+func signupAccount(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		danger(err, "Cannot paarse form")
+	}
+	user := data.User{
+		Name:     r.PostFormValue("name"),
+		Email:    r.PostFormValue("email"),
+		Password: r.PostFormValue("password"),
+	}
+	if err := user.Create(); err != nil {
+		danger(err, "Cannot create user")
+	}
+	http.Redirect(w, r, "/login", 302)
 }
 
 func authenticate(w http.ResponseWriter, r *http.Request) {
