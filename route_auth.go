@@ -6,6 +6,11 @@ import (
 	"github.com/edm20627/go_chat/data"
 )
 
+func login(w http.ResponseWriter, r *http.Request) {
+	t := parseTemplateFiles("login.layout", "public.navbar", "login")
+	t.Execute(w, nil)
+}
+
 func authenticate(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	user, err := data.UserByEmail(r.PostFormValue("email"))
