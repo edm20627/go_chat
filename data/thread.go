@@ -12,6 +12,10 @@ type Thread struct {
 	CreatedAt time.Time
 }
 
+func (thread *Thread) CreatedAtDate() string {
+	return thread.CreatedAt.Format("Jan 2, 2006 at 3:04pm")
+}
+
 func (thread *Thread) NumReplies() (count int) {
 	rows, err := Db.Query("SELECT count(*) FROM posts where thread_id = $1", thread.Id)
 	if err != nil {
@@ -50,5 +54,11 @@ func Threads() (threads []Thread, err error) {
 		threads = append(threads, conv)
 	}
 	rows.Close()
+	return
+}
+
+func (thread *Thread) User() (user User) {
+	user = User{}
+	Db.QueryRow("SELECT id, uuid, name, email, created_at FROM users WHERE id = $1", thread.UserId).Scan(&user.Id, &user.Uuid, &user.Name, &user.Email, &user.CreatedAt)
 	return
 }
