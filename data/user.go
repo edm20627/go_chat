@@ -54,6 +54,12 @@ func (session *Session) DeleteByUUID() (err error) {
 	return
 }
 
+func (session *Session) User() (user User, err error) {
+	user = User{}
+	err = Db.QueryRow("SELECT id, uuid, name, email, created_at FROM users WHERE id = $1", session.UserId).Scan(&user.Id, &user.Uuid, &user.Name, &user.Email, &user.CreatedAt)
+	return
+}
+
 func (user *User) Create() (err error) {
 	statement := "insert into users (uuid ,name, email, password, created_at) values ($1, $2, $3, $4, $5) returning id, uuid, created_at"
 	stmt, err := Db.Prepare(statement)
