@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"time"
 )
 
 func main() {
@@ -10,7 +11,6 @@ func main() {
 	mux.Handle("/static/", http.StripPrefix("/static/", files))
 
 	mux.HandleFunc("/", index)
-
 	mux.HandleFunc("/err", err)
 
 	mux.HandleFunc("/login", login)
@@ -25,8 +25,11 @@ func main() {
 	mux.HandleFunc("/thread/read", readThread)
 
 	server := &http.Server{
-		Addr:    "0.0.0.0:8080",
-		Handler: mux,
+		Addr:           config.Address,
+		Handler:        mux,
+		ReadTimeout:    time.Duration(config.ReadTimeout * int64(time.Second)),
+		WriteTimeout:   time.Duration(config.WriteTimeout * int64(time.Second)),
+		MaxHeaderBytes: 1 << 20,
 	}
 	server.ListenAndServe()
 }
