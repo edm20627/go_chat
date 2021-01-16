@@ -12,6 +12,15 @@ type Thread struct {
 	CreatedAt time.Time
 }
 
+type Post struct {
+	Id        int
+	Uuid      string
+	Body      string
+	UserId    int
+	ThreadId  int
+	CreatedAt time.Time
+}
+
 func (thread *Thread) CreatedAtDate() string {
 	return thread.CreatedAt.Format("Jan 2, 2006 at 3:04pm")
 }
@@ -25,6 +34,22 @@ func (thread *Thread) NumReplies() (count int) {
 		if err = rows.Scan(&count); err != nil {
 			return
 		}
+	}
+	rows.Close()
+	return
+}
+
+func (thread *Thread) Posts() (posts []Post, err error) {
+	rows, err := Db.Query("SELECT id, uuid, body, user_id, thread_id, created_at FROM posts where thread_id = $1", thread.Id)
+	if err != nil {
+		return
+	}
+	for rows.Next() {
+		post := Post{}
+		if err = rows.Scan(&post.Id, &post.Uuid, &post.Body, &post.UserId, &post.ThreadId, &post.CreatedAt); err != nil {
+			return
+		}
+		posts = append(posts, post)
 	}
 	rows.Close()
 	return
@@ -54,6 +79,12 @@ func Threads() (threads []Thread, err error) {
 		threads = append(threads, conv)
 	}
 	rows.Close()
+	return
+}
+
+func ThreadByUUID(uuid string) (conv Thread, err error) {
+	conv = Thread{}
+	err = Db.QueryRow("SELECT id, uuid, topic, user_id, created_at FROM threads WHERE uuid = $1", uuid).Scan(&conv.Id, &conv.Uuid, &conv.Topic, &conv.UserId, &conv.CreatedAt)
 	return
 }
 

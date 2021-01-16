@@ -1,6 +1,10 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/edm20627/go_chat/data"
+)
 
 func newThread(w http.ResponseWriter, r *http.Request) {
 	_, err := session(w, r)
@@ -29,5 +33,21 @@ func createThread(w http.ResponseWriter, r *http.Request) {
 			danger(err, "Cannot create thread")
 		}
 		http.Redirect(w, r, "/", 302)
+	}
+}
+
+func readThread(w http.ResponseWriter, r *http.Request) {
+	vals := r.URL.Query()
+	uuid := vals.Get("id")
+	thread, err := data.ThreadByUUID(uuid)
+	if err != nil {
+		error_message(w, r, "Cannot read thread")
+	} else {
+		_, err := session(w, r)
+		if err != nil {
+			generateHTML(w, &thread, "layout", "public.navbar", "public.thread")
+		} else {
+			generateHTML(w, &thread, "layout", "private.navbar", "private.thread")
+		}
 	}
 }
