@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/edm20627/go_chat/data"
@@ -49,5 +50,32 @@ func readThread(w http.ResponseWriter, r *http.Request) {
 		} else {
 			generateHTML(w, &thread, "layout", "private.navbar", "private.thread")
 		}
+	}
+}
+
+func postThread(w http.ResponseWriter, r *http.Request) {
+	sess, err := session(w, r)
+	if err != nil {
+		http.Redirect(w, r, "/login", 302)
+	} else {
+		err = r.ParseForm()
+		if err != nil {
+			danger(err, "Cannot parse form")
+		}
+		user, err := sess.User()
+		if err != nil {
+			danger(err, "Cannot get user from session")
+		}
+		body := r.PostFormValue("body")
+		uuid := r.PostFormValue("uuid")
+		thread, err := data.ThreadByUUID(uuid)
+		if err != nil {
+			error_message(w, r, "Cannot read thread")
+		}
+		if _, err := user.CreatePost(thread, body); err != nil {
+			danger(err, "Cannot create post")
+		}
+		url := fmt.Sprint("/thread/read?id=", uuid)
+		http.Redirect(w, r, url, 302)
 	}
 }
